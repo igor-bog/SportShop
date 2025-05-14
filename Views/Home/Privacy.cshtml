@@ -1,0 +1,119 @@
+﻿@{
+    Layout = null;
+    ViewData["Title"] = "Информация о магазине";
+}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - Sport Shop</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/site.css" rel="stylesheet" />
+     <style>
+        /* Устанавливаем минимальную высоту для body, чтобы футер был внизу */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        main {
+            flex-grow: 1;
+        }
+
+         
+        /* Размещение кнопки "Назад" в правом верхнем углу */
+        .logout-btn {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+        }
+
+
+
+          .btn-secondary {
+            background-color: rgba(255, 0, 0, 0.637); /* Красный фон */
+            border: none;
+            color: white; /* Белый текст */
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .btn-secondary:hover {
+            background-color: darkred; /* Тёмно-красный при наведении */
+        }
+
+
+        
+          .btn-third {
+            background-color: rgba(246, 198, 8, 0.859); /* Красный фон */
+            border: none;
+            color: white; /* Белый текст */
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .btn-third:hover {
+            background-color: rgb(221, 152, 5); /* Тёмно-красный при наведении */
+        }
+
+          .cartitems-btn {
+            position: absolute;
+            top: 15px;
+            right: 250px;
+        }
+
+
+    </style>
+</head>
+
+
+<body>
+
+
+
+    <!-- 🔷 Кастомный Хэдер -->
+    <header class="bg-dark text-white p-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <h3 class="mb-0">🏪 Sportland Shop</h3>
+            <a href="/Home/IndexUser" class="btn btn-outline-light">На главную</a>
+            <a href="/Home/Cart" class="btn cartitems-btn btn-third">Корзина</a>
+        </div>
+    </header>
+
+
+<form asp-controller="Home" asp-action="Logout" method="post" class="d-inline">
+    <button type="submit" class="btn logout-btn btn-secondary">Выйти</button>
+</form>
+
+
+    <!-- 🔶 Контент страницы -->
+    <main class="container mt-5">
+        <h1>@ViewData["Title"]</h1>
+        <p>
+            Добро пожаловать в наш магазин спортивных товаров!<br />
+            Мы предлагаем широкий ассортимент одежды, обуви и оборудования для всех видов спорта.<br />
+            Работаем с 9:00 до 20:00 каждый день, без выходных.<br />
+            Адрес: г. Кишинёв, ул. Пушкина 42.<br />
+            Телефон: +373 788 00 761<br />
+            Email: info@sportlandshop.ru
+        </p>
+
+        <a class="btn btn-primary mt-3" href="/Home/Products">Перейти к товарам</a>
+    </main>
+
+    <!-- 🔻 Кастомный футер -->
+    <footer class="bg-light text-center text-muted py-3 mt-5 border-top">
+        <div class="container">
+            &copy; 2025 - Sportland Shop - <a href="/Home/Contact" class="text-decoration-none">Контакты</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
