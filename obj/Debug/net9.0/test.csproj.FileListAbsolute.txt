@@ -218,3 +218,4 @@ C:\Users\admin\test\obj\Debug\net9.0\ref\test.dll
 C:\Users\admin\test\obj\Debug\net9.0\compressed\92rk1w1z3n-ovyibbz3qw.gz
 C:\Users\admin\test\obj\Debug\net9.0\compressed\yy8pupl6iu-ovyibbz3qw.gz
 C:\Users\admin\test\obj\Debug\net9.0\compressed\tbs5d15iad-d4kvqpbuzy.gz
+C:\Users\admin\test\obj\Debug\net9.0\test.sourcelink.json

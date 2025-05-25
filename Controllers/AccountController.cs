@@ -2,18 +2,18 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using System.Linq;
 using test.Models;
+using test.Services;
 
 namespace test.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAccountService _accountService;
 
-        public AccountController(AppDbContext context)
+        public AccountController(IAccountService accountService)
         {
-            _context = context;
+            _accountService = accountService;
         }
 
         [HttpGet]
@@ -25,14 +25,15 @@ namespace test.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string FirstName, string Password)
         {
-            var user = _context.Users.FirstOrDefault(u => u.FirstName == FirstName && u.Password == Password);
+            var user = await _accountService.AuthenticateAsync(FirstName, Password);
+
             if (user != null)
             {
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.FirstName),
                     new Claim("FullName", $"{user.FirstName} {user.SecondName}"),
-                     new Claim(ClaimTypes.Role, user.Role) // Используем роль из базы данных!
+                    new Claim(ClaimTypes.Role, user.Role)
                 };
 
                 var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -40,27 +41,16 @@ namespace test.Controllers
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
-
-             // 🔁 Перенаправляем по роли:
-
-Console.WriteLine($"user.Role: '{user.Role}'");
-
-
-    if (user.Role == "admin")
-    {
-
-  Console.WriteLine("Redirecting to Admin Panel");
-
-
-        return RedirectToAction("AdminPanel", "Home");
-    }
-    else
-    {
-
-
-                return RedirectToAction("Index", "Home");
+                if (user.Role == "admin")
+                {
+                    return RedirectToAction("AdminPanel", "Home");
+                }
+                else
+                {
+                    return RedirectToAction("Index", "Home");
+                }
             }
-        }
+
             ViewBag.Error = "Invalid username or password";
             return View();
         }

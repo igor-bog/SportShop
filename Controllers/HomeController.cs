@@ -1,229 +1,187 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using test.Models;
+using test.Services;
 
 namespace test.Controllers;
 
 public class HomeController : Controller
 {
-   private readonly AppDbContext _context; // Объявляем контекст
+    private readonly IHomeService _homeService;
 
-        // Инжектируем контекст в конструктор
-        public HomeController(AppDbContext context)
-        {
-            _context = context;
-        }
-
-
-           public IActionResult Users()
+    public HomeController(IHomeService homeService)
     {
-        var users = _context.Users.ToList();
+        _homeService = homeService;
+    }
+
+    public IActionResult Users()
+    {
+        var users = _homeService.GetAllUsers();
         return View(users);
     }
 
+    [Authorize]
+    public IActionResult Cart()
+    {
+        var cart = HttpContext.Session.GetObjectFromJson<List<Product>>("Cart") ?? new List<Product>();
+        return View(cart);
+    }
 
+    [HttpPost]
+    public IActionResult AddToCart(Product product)
+    {
+        var cart = HttpContext.Session.GetObjectFromJson<List<Product>>("Cart") ?? new List<Product>();
+        cart.Add(product);
+        HttpContext.Session.SetObjectAsJson("Cart", cart);
+        return RedirectToAction("Cart", "Home");
+    }
 
-
-
-          ///////////////////////////////////////////// Отображение корзины
-        public IActionResult Cart()
-        {
-            // Получаем список товаров из сессии (если они есть)
-            var cart = HttpContext.Session.GetObjectFromJson<List<Product>>("Cart") ?? new List<Product>();
-            return View(cart); // Отправляем товары на представление
-        }
-
-        // Добавить товар в корзину
-        [HttpPost]
-        public IActionResult AddToCart(Product product)
-        {
-            // Получаем текущую корзину из сессии
-            var cart = HttpContext.Session.GetObjectFromJson<List<Product>>("Cart") ?? new List<Product>();
-            
-            // Добавляем новый товар в корзину
-            cart.Add(product);
-            
-            // Сохраняем обновленную корзину в сессию
-            HttpContext.Session.SetObjectAsJson("Cart", cart);
-            
-            // Перенаправляем на страницу корзины
-            return RedirectToAction("Cart", "Home");
-        }
-
-        // Очистить корзину
-        public IActionResult ClearCart()
-        {
-            // Удаляем корзину из сессии
-            HttpContext.Session.Remove("Cart");
-            return RedirectToAction("Cart");
-        }
-    
-    
-// ///////////////////////////////////
-
-
+    public IActionResult ClearCart()
+    {
+        HttpContext.Session.Remove("Cart");
+        return RedirectToAction("Cart");
+    }
 
     public IActionResult Index()
     {
         return View();
     }
 
-
-public IActionResult Logout()
-{
-
-    // Очищаем корзину из сессии
+    public IActionResult Logout()
+    {
         HttpContext.Session.Remove("Cart");
-
-    // Очистка сессии (если ты используешь сессии)
-    HttpContext.Session.Clear();
-
-    // Можно также очистить куки вручную, если они используются
-    Response.Cookies.Delete(".AspNetCore.Cookies"); // если используешь cookie auth
-
-    return RedirectToAction("Index", "Home");
-}
-
-
-[HttpPost]
-public IActionResult RemoveFromCart(int id)
-{
-    var cart = HttpContext.Session.GetObjectFromJson<List<Product>>("Cart") ?? new List<Product>();
-
-    // Удаление по ID первого совпавшего
-    var itemToRemove = cart.FirstOrDefault(p => p.Id == id);
-    if (itemToRemove != null)
-    {
-        cart.Remove(itemToRemove);
-        HttpContext.Session.SetObjectAsJson("Cart", cart);
+        HttpContext.Session.Clear();
+        Response.Cookies.Delete(".AspNetCore.Cookies");
+        return RedirectToAction("Index", "Home");
     }
 
-    return RedirectToAction("Cart");
-}
-
-
-public class AdminController : Controller
-{
-    private readonly AppDbContext _context;
-
-    public AdminController(AppDbContext context)
+    [HttpPost]
+    public IActionResult RemoveFromCart(int id)
     {
-        _context = context;
+        var cart = HttpContext.Session.GetObjectFromJson<List<Product>>("Cart") ?? new List<Product>();
+        var itemToRemove = cart.FirstOrDefault(p => p.Id == id);
+        if (itemToRemove != null)
+        {
+            cart.Remove(itemToRemove);
+            HttpContext.Session.SetObjectAsJson("Cart", cart);
+        }
+        return RedirectToAction("Cart");
     }
 
-    public IActionResult Users()
+
+  public class AdminController : Controller
     {
-        var users = _context.Users.ToList();
-        return View(users);
+        private readonly IHomeService _homeService;
+
+        public AdminController(IHomeService homeService)
+        {
+            _homeService = homeService;
+        }
+
+        public IActionResult Users()
+        {
+            var users = _homeService.GetAllUsers();
+            return View(users);
+        }
     }
-}
 
 
-
-
-
-
-
+    [Authorize]
     public IActionResult IndexUser()
     {
         return View();
     }
 
+    [Authorize]
     public IActionResult Privacy()
     {
         return View();
     }
 
-
-
- public IActionResult Products()
+    [Authorize]
+    public IActionResult Products()
     {
         return View();
     }
 
- // Страница регистрации
-        public IActionResult Register()
-        {
-            return View();
-        }
-
-        // Обработка формы регистрации
-        [HttpPost]
-        public IActionResult Register(RegisterModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var user = new User
-                {
-                    FirstName = model.FirstName,
-                    SecondName = model.SecondName,
-                    Password = model.Password,
-                    Role = "user"
-                };
-
-                _context.Users.Add(user);
-                _context.SaveChanges();
-                return RedirectToAction("Index"); // Перенаправляем на главную страницу после регистрации
-            }
-
-            return View();
-        }
-
-
-
-        public IActionResult AdminPanel()
-        {
-              // Проверка роли из сессии
-    var role = HttpContext.Session.GetString("Role");
-
-    if (string.IsNullOrEmpty(role) || role != "admin")
+    public IActionResult Register()
     {
-        return RedirectToAction("Index", "Home"); // или показать страницу "Access Denied"
+        return View();
     }
-            return View();
-        }
 
-
-
-          // Метод для отображения страницы логина
-        public IActionResult Login()
+    [HttpPost]
+    public IActionResult Register(RegisterModel model)
+    {
+        if (ModelState.IsValid)
         {
-            return View();
-        }
-
-        // Метод для обработки логина
-        [HttpPost]
-        public IActionResult Login(string FirstName, string Password)
-        {
-            // Поиск пользователя в базе данных
-            var user = _context.Users.SingleOrDefault(u => u.FirstName == FirstName && u.Password == Password);
-            
-            if (user != null)
+            var user = new User
             {
-                // Логика успешной авторизации
-                // Например, установка cookies или сессии
+                FirstName = model.FirstName,
+                SecondName = model.SecondName,
+                Password = model.Password,
+                Role = "user"
+            };
 
-              // Сохраняем данные в сессию
-    HttpContext.Session.SetString("FirstName", user.FirstName);
-    HttpContext.Session.SetString("Role", user.Role ?? "user"); // если вдруг null, будет "user"
+            _homeService.RegisterUser(user);
+            return RedirectToAction("Index");
+        }
 
-              if (user.Role?.ToLower() == "admin")
+        return View();
+    }
+
+    public IActionResult AdminPanel()
+    {
+        var role = HttpContext.Session.GetString("Role");
+        if (string.IsNullOrEmpty(role) || role != "admin")
         {
-            return RedirectToAction("AdminPanel", "Home"); // или RedirectToPage, если Razor Pages
+            return RedirectToAction("Index", "Home");
+        }
+        return View();
+    }
+
+    public IActionResult Login()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Login(string FirstName, string Password)
+    {
+        var user = _homeService.Authenticate(FirstName, Password);
+
+        if (user != null)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.FirstName),
+                new Claim(ClaimTypes.Role, user.Role ?? "user")
+            };
+
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var authProperties = new AuthenticationProperties { IsPersistent = true };
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperties
+            );
+
+            HttpContext.Session.SetString("FirstName", user.FirstName);
+            HttpContext.Session.SetString("Role", user.Role ?? "user");
+
+            if (user.Role?.ToLower() == "admin")
+                return RedirectToAction("AdminPanel", "Home");
+
+            return RedirectToAction("Privacy");
         }
 
-                // Пример: редирект на страницу профиля после успешного логина
-                return RedirectToAction("Privacy");
-            }
-
-            // Если логин не удался
-            ViewData["Error"] = "Invalid username or password";
-            return View();
-        }
-
-//
-
-
+        ViewData["Error"] = "Invalid username or password";
+        return View();
+    }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()

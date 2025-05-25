@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using test.Models;
-
+using test.Services;
 
 namespace test.Controllers;
 
@@ -8,18 +8,17 @@ namespace test.Controllers;
 [Route("[controller]")]
 public class RegisterController : ControllerBase
 {
-    private readonly AppDbContext _context;
+     private readonly IUserService _userService;
 
-    public RegisterController(AppDbContext context)
-    {
-        _context = context;
-    }
+        public RegisterController(IUserService userService)
+        {
+            _userService = userService;
+        }
 
     [HttpPost]
     public IActionResult Post([FromBody] User user)
     {
-        _context.Users.Add(user);
-        _context.SaveChanges();
+         _userService.RegisterUser(user);
         return Ok(new { success = true });
     }
 }

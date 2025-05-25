@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using test.Services;
 
 
 
@@ -17,6 +18,9 @@ builder.Services.AddRazorPages();  // Это добавляет поддержк
 
 builder.Services.AddControllers();
 
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IHomeService, HomeService>();
 
 // Добавляем поддержку сессий
 builder.Services.AddSession(options =>
