@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using test.Models;
 public class AppDbContext : DbContext
 {
     public DbSet<User> Users { get; set; }

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using test.Services;
-
+using test.Models;
 namespace test.Controllers
 {
     [Route("api/[controller]")]

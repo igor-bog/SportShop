@@ -10,6 +10,17 @@ public class HomeService : IHomeService
         _context = context;
     }
 
+        public void DeleteUser(int id)
+    {
+        var user = _context.Users.Find(id);
+        if (user != null)
+        {
+            _context.Users.Remove(user);
+            _context.SaveChanges(); // ← именно это удаляет из базы
+        }
+    }
+
+
     public List<User> GetAllUsers()
     {
         return _context.Users.ToList();
@@ -20,6 +31,13 @@ public class HomeService : IHomeService
         _context.Users.Add(user);
         _context.SaveChanges();
     }
+
+
+        public bool UserExists(string firstName)
+{
+    return _context.Users.Any(u => u.FirstName == firstName);
+}
+
 
     public User Authenticate(string firstName, string password)
     {

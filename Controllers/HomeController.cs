@@ -18,11 +18,25 @@ public class HomeController : Controller
         _homeService = homeService;
     }
 
-    public IActionResult Users()
+    [HttpPost]
+public IActionResult DeleteUser(int id)
+{
+    _homeService.DeleteUser(id);  // ← удаляет пользователя через сервис
+    return RedirectToAction("Users");
+}
+
+        
+ public IActionResult Users()
+{
+    var role = HttpContext.Session.GetString("Role");
+    if (string.IsNullOrEmpty(role) || role != "admin")
     {
-        var users = _homeService.GetAllUsers();
-        return View(users);
+        return RedirectToAction("ErrorAccess", "Home");
     }
+
+    var users = _homeService.GetAllUsers();
+    return View(users);
+}
 
     [Authorize]
     public IActionResult Cart()
@@ -50,6 +64,12 @@ public class HomeController : Controller
     {
         return View();
     }
+
+      public IActionResult ErrorAccess()
+    {
+        return View();
+    }
+
 
     public IActionResult Logout()
     {
@@ -82,11 +102,53 @@ public class HomeController : Controller
             _homeService = homeService;
         }
 
-        public IActionResult Users()
+      public IActionResult Users()
         {
+            var role = HttpContext.Session.GetString("Role");
+            if (role != "admin")
+            {
+                return RedirectToAction("ErrorAccess", "Home");
+            }
+
             var users = _homeService.GetAllUsers();
             return View(users);
         }
+    }
+
+
+   [Authorize] [HttpGet]
+public IActionResult Checkout()
+{
+    return View();
+}
+
+[HttpPost]
+public IActionResult Checkout(CheckoutModel model)
+{
+    if (!ModelState.IsValid)
+    {
+        return View(model);
+    }
+
+    // Обработка заказа, например, сохранение или отправка уведомлений
+ var cart = HttpContext.Session.GetObjectFromJson<List<Product>>("Cart") ?? new List<Product>();
+    var totalAmount = cart.Sum(p => p.Price);
+
+    HttpContext.Session.Remove("Cart"); // очищаем после оформления
+    return RedirectToAction("OrderSuccess", new { amount = totalAmount });
+}
+
+
+    public IActionResult OrderSuccess(decimal amount)
+{
+    ViewBag.Amount = amount;
+    return View();
+}
+
+
+    public IActionResult Contacts()
+    {
+        return View();
     }
 
 
@@ -118,6 +180,14 @@ public class HomeController : Controller
     {
         if (ModelState.IsValid)
         {
+
+             // Проверяем, есть ли пользователь с таким FirstName
+        if (_homeService.UserExists(model.FirstName))
+        {
+            ModelState.AddModelError("", "Пользователь с таким именем уже существует");
+            return View(model);
+        }
+
             var user = new User
             {
                 FirstName = model.FirstName,
@@ -138,7 +208,7 @@ public class HomeController : Controller
         var role = HttpContext.Session.GetString("Role");
         if (string.IsNullOrEmpty(role) || role != "admin")
         {
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("ErrorAccess", "Home");
         }
         return View();
     }

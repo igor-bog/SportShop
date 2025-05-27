@@ -1,0 +1,94 @@
+@{
+    ViewData["Title"] = "Order Success";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Обработка заказа...</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        .loader-container, .success-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .loader {
+            border: 10px solid #f3f3f3;
+            border-top: 10px solid #3498db;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            animation: spin 1s linear infinite;
+        }
+
+        @@keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .success-container {
+            display: none;
+            flex-direction: column;
+        }
+
+        .success-message {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #2ecc71;
+        }
+
+        .amount {
+            font-size: 18px;
+        }
+
+          button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #2e86c1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="loader-container" id="loader">
+        <div class="loader"></div>
+        <p>Обработка заказа...</p>
+    </div>
+
+    <div class="success-container" id="success">
+        <div class="success-message">Заказ успешно оформлен!</div>
+        <div class="amount">На сумму: <strong>@ViewBag.Amount.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</strong></div>
+         <button onclick="window.location.href='@Url.Action("Privacy", "Home")'">На главную</button>
+    </div>
+
+    <script>
+        // Показать анимацию на 2.5 секунды, затем показать основной контент
+        setTimeout(() => {
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('success').style.display = 'flex';
+        }, 2500);
+    </script>
+
+</body>
+</html>

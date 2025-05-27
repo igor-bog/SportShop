@@ -13,7 +13,27 @@ namespace test.Services
 
         }
 
+         public void DeleteUser(int id)
+    {
+        var user = _context.Users.Find(id);
+        if (user != null)
+        {
+            _context.Users.Remove(user);
+            _context.SaveChanges(); 
+        }
+    }
+    
+public bool UserExists(string firstName)
+{
+    return _context.Users.Any(u => u.FirstName == firstName);
+}
 
+
+
+  public List<User> GetAllUsers()
+        {
+            return _context.Users.ToList();
+        }
 
         public async Task<bool> RegisterUserAsync(User user)
         {
