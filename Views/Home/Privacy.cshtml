@@ -7,35 +7,34 @@
 <html lang="ru">
 <head>
     <meta charset="utf-8" />
-    <title>@ViewData["Title"] - Sport Shop</title>
+    <title>@ViewData["Title"] - Sportland Shop</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="~/css/site.css" rel="stylesheet" />
-     <style>
-        /* Устанавливаем минимальную высоту для body, чтобы футер был внизу */
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
         body {
+            background: linear-gradient(to right, #16222A, #3A6073);
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
+
         main {
             flex-grow: 1;
+            padding-top: 60px;
+            animation: fadeIn 1s ease;
         }
 
-         
-        /* Размещение кнопки "Назад" в правом верхнем углу */
-        .logout-btn {
-            position: absolute;
-            top: 15px;
-            left: 20px;
+        @@keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-
-
-          .btn-secondary {
-            background-color: rgba(255, 0, 0, 0.637); /* Красный фон */
+        .btn-secondary {
+            background-color: rgba(255, 0, 0, 0.637);
             border: none;
-            color: white; /* Белый текст */
+            color: white;
             padding: 10px 20px;
             font-size: 16px;
             border-radius: 5px;
@@ -43,15 +42,13 @@
         }
 
         .btn-secondary:hover {
-            background-color: darkred; /* Тёмно-красный при наведении */
+            background-color: darkred;
         }
 
-
-        
-          .btn-third {
-            background-color: rgba(246, 198, 8, 0.859); /* Красный фон */
+        .btn-third {
+            background-color: rgba(246, 198, 8, 0.859);
             border: none;
-            color: white; /* Белый текст */
+            color: white;
             padding: 10px 20px;
             font-size: 16px;
             border-radius: 5px;
@@ -59,61 +56,96 @@
         }
 
         .btn-third:hover {
-            background-color: rgb(221, 152, 5); /* Тёмно-красный при наведении */
+            background-color: rgb(221, 152, 5);
         }
 
-          .cartitems-btn {
+        .logout-btn {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+        }
+
+        .cartitems-btn {
             position: absolute;
             top: 15px;
             right: 250px;
         }
 
+        h1 {
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 5px #000;
+        }
 
+        p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        .btn-products {
+            margin-top: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        footer {
+            background-color: #f8f9fa;
+            color: #555;
+            padding: 1rem 0;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .nav-header {
+            background-color: #000;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-header h3 {
+            margin: 0;
+            margin-left: 90px;
+            
+        }
     </style>
 </head>
-
-
 <body>
-
-
-
-    <!--  Кастомный Хэдер -->
-    <header class="bg-dark text-white p-3">
-        <div class="container d-flex justify-content-between align-items-center">
-            <h3 class="mb-0"> Sportland Shop</h3>
-            <a href="/Home/IndexUser" class="btn btn-outline-light">На главную</a>
-            <a href="/Home/Cart" class="btn cartitems-btn btn-third">Корзина</a>
+    <header class="nav-header">
+        <h3>Sportland Shop</h3>
+        <div>
+            <a href="/Home/IndexUser" class="btn btn-outline-light me-3">На главную</a>
+            <a href="/Home/Cart" class="btn btn-third">Корзина</a>
         </div>
     </header>
 
+    <form asp-controller="Home" asp-action="Logout" method="post" class="d-inline">
+        <button type="submit" class="btn logout-btn btn-secondary">Выйти</button>
+    </form>
 
-<form asp-controller="Home" asp-action="Logout" method="post" class="d-inline">
-    <button type="submit" class="btn logout-btn btn-secondary">Выйти</button>
-</form>
-
-
-    <!--  Контент страницы -->
-    <main class="container mt-5">
+    <main class="container">
         <h1>@ViewData["Title"]</h1>
         <p>
-            Добро пожаловать в наш магазин спортивных товаров!<br />
-            Мы предлагаем широкий ассортимент одежды, обуви и оборудования для всех видов спорта.<br />
-            Работаем с 9:00 до 20:00 каждый день, без выходных.<br />
-            Адрес: г. Кишинёв, ул. Пушкина 42.<br />
-            Телефон: +373 788 00 761<br />
-            Email: info@sportlandshop.ru
+            Добро пожаловать в <strong>Sportland Shop</strong> — ваш универсальный магазин спортивных товаров!<br />
+            У нас вы найдете:<br />
+            — Экипировку для профессионалов и новичков;<br />
+            — Одежду, обувь и аксессуары для фитнеса, бега, футбола и других видов спорта;<br />
+            — Надёжное оборудование и актуальные новинки от лучших брендов.<br /><br />
+            Мы открыты ежедневно с 9:00 до 20:00 без выходных.<br />
+             Адрес: г. Кишинёв, ул. Пушкина 42<br />
+             Телефон: +373 788 00 761<br />
+             Email: info@sportlandshop.ru
         </p>
 
-        <a class="btn btn-primary mt-3" href="/Home/Products">Перейти к товарам</a>
+        <a class="btn btn-light btn-products" href="/Home/Products">→ Перейти к товарам</a>
     </main>
 
-    <!--  Кастомный футер -->
-    <footer class="bg-light text-center text-muted py-3 mt-5 border-top">
-        <div class="container">
-            &copy; 2025 - Sportland Shop - <a href="/Home/Contact" class="text-decoration-none">Контакты</a>
-        </div>
+    <footer>
+        &copy; 2025 - Sportland Shop <a href="/Home/Contacts" class="text-decoration-none"></a>
     </footer>
 
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
