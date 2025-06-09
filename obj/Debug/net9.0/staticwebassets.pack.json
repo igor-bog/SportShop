@@ -37,6 +37,14 @@
       "PackagePath": "staticwebassets\\images\\product5.jpg"
     },
     {
+      "Id": "C:\\Users\\admin\\test\\wwwroot\\images\\product6.png",
+      "PackagePath": "staticwebassets\\images\\product6.png"
+    },
+    {
+      "Id": "C:\\Users\\admin\\test\\wwwroot\\images\\product7.png",
+      "PackagePath": "staticwebassets\\images\\product7.png"
+    },
+    {
       "Id": "C:\\Users\\admin\\test\\wwwroot\\js\\site.js",
       "PackagePath": "staticwebassets\\js\\site.js"
     },

@@ -84,6 +84,11 @@
             right: 20px;
         }
 
+        .card-img-top {
+    max-width: 100%;
+    height: 200px; /* , 200px  */
+    object-fit: contain; /* чтобы изображение не искажалось */
+}
 
 
     </style>
@@ -192,6 +197,43 @@
                     </div>
                 </div>
             </div>
+
+         <div class="col-md-4">
+                <div class="card">
+                    <img src="/images/product6.png" class="card-img-top" alt="Товар 6">
+                    <div class="card-body">
+                        <h5 class="card-title">Футболка Demix </h5>
+                        <p class="card-text">Качественная Футболка. Синтетика</p>
+                        <form method="post" asp-controller="Cart" asp-action="AddToCart">
+    <input type="hidden" name="Id" value="6" />
+    <input type="hidden" name="Name" value="Футболка Demix" />
+    <input type="hidden" name="Description" value="Футболка Demix. Отличное качество, хорошая цена." />
+    <input type="hidden" name="Price" value="35" />
+    <input type="hidden" name="ImageUrl" value="/images/product6.png" />
+    <button type="submit" class="btn btn-primary">Купить</button>
+</form>
+                    </div>
+                </div>
+            </div>
+
+             <div class="col-md-4">
+                <div class="card">
+                    <img src="/images/product7.png" class="card-img-top" alt="Товар 6">
+                    <div class="card-body">
+                        <h5 class="card-title">Рюкзак Puma </h5>
+                        <p class="card-text">Удобный ёмкий Рюкзак</p>
+                        <form method="post" asp-controller="Cart" asp-action="AddToCart">
+    <input type="hidden" name="Id" value="7" />
+    <input type="hidden" name="Name" value="Рюкзак Puma" />
+    <input type="hidden" name="Description" value="Рюкзак Puma. Отличное качество, хорошая цена." />
+    <input type="hidden" name="Price" value="40" />
+    <input type="hidden" name="ImageUrl" value="/images/product7.png" />
+    <button type="submit" class="btn btn-primary">Купить</button>
+</form>
+                    </div>
+                </div>
+            </div>
+
 
         </div>
     </div>
